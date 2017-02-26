@@ -79,10 +79,18 @@ static dispatch_queue_t serialTransactionQueue;
 
 + (nonnull CdManagedObjectContext *)mainThreadContext {
     if (!_mainThreadContext) {
-        [CdException raiseWithFormat:@"Cadmium must be initialized before a main thread context is available."];
+        [CdException raiseWithFormat:@"Cadmium must be initialized before the main thread context is available."];
     }
     
     return _mainThreadContext;
+}
+
++ (nonnull CdManagedObjectContext *)masterSaveContext {
+    if (!_masterSaveContext) {
+        [CdException raiseWithFormat:@"Cadmium must be initialized before the master save context is available."];
+    }
+    
+    return _masterSaveContext;
 }
 
 + (nonnull CdManagedObjectContext *)newBackgroundContext {

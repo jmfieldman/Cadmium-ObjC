@@ -15,6 +15,7 @@
 @interface CdManagedObjectContext (Internal)
 
 + (nonnull CdManagedObjectContext *)mainThreadContext;
++ (nonnull CdManagedObjectContext *)masterSaveContext;
 + (nonnull CdManagedObjectContext *)newBackgroundContext;
 + (void)saveMasterWriteContext:(NSError * _Nullable * _Nullable)error;
 
