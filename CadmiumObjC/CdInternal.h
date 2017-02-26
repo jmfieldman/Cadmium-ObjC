@@ -11,6 +11,7 @@
 
 #import "CdManagedObjectContext.h"
 #import "CdManagedObject.h"
+#import "CdFetchRequest.h"
 
 @interface CdManagedObjectContext (Internal)
 
@@ -26,6 +27,11 @@
 @interface CdManagedObject (Internal)
 
 - (void)notifyUpdateHandlers:(CdManagedObjectUpdateEvent)event;
+
+@end
+
+
+@interface CdFetchRequest (Internal)
 
 @end
 

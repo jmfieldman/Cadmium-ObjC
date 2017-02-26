@@ -56,6 +56,8 @@ static BOOL s_defaultSerialTransactions = YES;
     [Cd initWithSQLStore:momdURL
                sqliteURL:sqliteURL
                  options:options];
+    
+    
 }
 
 

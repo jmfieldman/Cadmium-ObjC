@@ -7,7 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CdManagedObject.h"
 
-@interface CdFetchRequest : NSObject
+@interface CdFetchRequest<T: CdManagedObject*> : NSObject
+
+@property (nonatomic, strong) NSFetchRequest * _Nonnull nsFetchRequest;
+
+- (instancetype)initWithEntityName:(nonnull NSString *)entityName;
 
 @end
