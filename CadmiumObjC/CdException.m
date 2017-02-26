@@ -33,3 +33,6 @@
 @implementation CdMainThreadAssertion
 @end
 
+@implementation CdFetchException
+@end
+

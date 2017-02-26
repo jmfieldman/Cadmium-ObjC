@@ -20,3 +20,6 @@
 
 @interface CdMainThreadAssertion : CdException
 @end
+
+@interface CdFetchException : CdException
+@end

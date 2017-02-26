@@ -7,6 +7,9 @@
 //
 
 #import "CdFetchRequest.h"
+#import "CdManagedObjectContext.h"
+#import "NSThread+Cadmium.h"
+#import "CdException.h"
 
 @implementation CdFetchRequest {
     NSMutableDictionary<NSString *, NSExpressionDescription *> *_includedExpressions;
@@ -15,7 +18,7 @@
 }
 
 
-- (instancetype)initWithEntityName:(nonnull NSString *)entityName; {
+- (nonnull instancetype)initWithEntityName:(nonnull NSString *)entityName; {
     if ((self = [super init])) {
         _nsFetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     }
@@ -127,6 +130,80 @@
 - (void)prefetchRelationships:(nonnull NSArray<NSString *> *)relationships {
     _nsFetchRequest.relationshipKeyPathsForPrefetching = relationships;
 }
+
+
+
+
+- (nullable NSArray *)fetch:(NSError * _Nullable * _Nullable)error {
+    CdManagedObjectContext *currentContext = NSThread.currentThread.attachedContext;
+    if (!currentContext) {
+        [CdFetchException raiseWithFormat:@"You cannot fetch data from a non-transactional background thread.  You may only query from the main thread or from inside a transaction."];
+    }
+    
+    if (_includedProperties.count > 0) {
+        _nsFetchRequest.propertiesToFetch = _includedProperties.allObjects;
+    }
+    
+    if (_includedExpressions.count > 0) {
+        [CdFetchException raiseWithFormat:@"You cannot call fetch if you have included custom expressions.  Use fetchDictionaryArray."];
+    }
+    
+    if (_includedGroupings.count > 0) {
+        [CdFetchException raiseWithFormat:@"You cannot call fetch if you have included custom groupings.  Use fetchDictionaryArray."];
+    }
+    
+    NSError *internalError = nil;
+    NSArray *results = [currentContext executeFetchRequest:_nsFetchRequest error:&internalError];
+    
+    if (internalError) {
+        *error = internalError;
+    }
+    
+    return results;
+}
+
+- (nullable NSArray<NSDictionary *> *)fetchDictionaryArray:(NSError * _Nullable * _Nullable)error {
+    CdManagedObjectContext *currentContext = NSThread.currentThread.attachedContext;
+    if (!currentContext) {
+        [CdFetchException raiseWithFormat:@"You cannot fetch data from a non-transactional background thread.  You may only query from the main thread or from inside a transaction."];
+    }
+    
+    _nsFetchRequest.resultType = NSDictionaryResultType;
+    
+    if (_includedProperties.count > 0) {
+        NSMutableArray *actualProperties = [NSMutableArray array];
+        for (NSString *propertyName in _includedProperties) {
+            if (_includedExpressions[propertyName]) {
+                [actualProperties addObject:_includedExpressions[propertyName]];
+            } else {
+                [actualProperties addObject:propertyName];
+            }
+        }
+        _nsFetchRequest.propertiesToFetch = actualProperties;
+    }
+    
+    if (_includedGroupings.count > 0) {
+        for (NSString *groupName in _includedGroupings) {
+            if (![_includedProperties containsObject:groupName]) {
+                [CdFetchException raiseWithFormat:@"You cannot group by a property name unless you've included it in onlyProperties"];
+            }
+        }
+        _nsFetchRequest.propertiesToGroupBy = _includedGroupings;
+    }
+    
+    NSError *internalError = nil;
+    NSArray *results = [currentContext executeFetchRequest:_nsFetchRequest error:&internalError];
+    
+    if (internalError) {
+        *error = internalError;
+    }
+    
+    return results;
+}
+
+
+
+
 
 
 @end

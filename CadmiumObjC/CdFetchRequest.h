@@ -13,6 +13,23 @@
 
 @property (nonatomic, strong) NSFetchRequest * _Nonnull nsFetchRequest;
 
-- (instancetype)initWithEntityName:(nonnull NSString *)entityName;
+- (nonnull instancetype)initWithEntityName:(nonnull NSString *)entityName;
+- (void)filterWithPredicate:(nonnull NSPredicate *)predicate;
+- (void)filterWithFormat:(nonnull NSString * const)format, ...;
+- (void)orWithPredicate:(nonnull NSPredicate *)predicate;
+- (void)orWithFormat:(nonnull NSString * const)format, ...;
+- (void)sortByProperty:(nonnull NSString *)property;
+- (void)sortByDescriptor:(nonnull NSSortDescriptor *)descriptor;
+- (void)includeExpressionNamed:(nonnull NSString *)name resultType:(NSAttributeType)type format:(nonnull NSString * const)format, ...;
+- (void)onlyProperties:(nonnull NSArray<NSString *> *)properties;
+- (void)groupBy:(nonnull NSArray<NSString *> *)properties;
+- (void)setLimit:(NSUInteger)limit;
+- (void)setOffset:(NSUInteger)offset;
+- (void)setBatchSize:(NSUInteger)batchSize;
+- (void)setDistinctResults:(BOOL)distinctResults;
+- (void)prefetchRelationships:(nonnull NSArray<NSString *> *)relationships;
+
+- (nullable NSArray<T> *)fetch:(NSError * _Nullable * _Nullable)error;
+- (nullable NSArray<NSDictionary *> *)fetchDictionaryArray:(NSError * _Nullable * _Nullable)error;
 
 @end
