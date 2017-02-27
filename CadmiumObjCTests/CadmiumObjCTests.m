@@ -10,6 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "Cd.h"
 #import "CdFetchRequest.h"
+#import "CdException.h"
 #import "TestItem.h"
 
 @interface CadmiumObjCTests : XCTestCase
@@ -189,14 +190,21 @@
     XCTAssertEqual(objs.count, 6, @"Query count equals");
     XCTAssertNil(error, @"Error: %@", error);
     
-    TestItem *obj = objs[0];
-    
     objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
         [config filterWithFormat:@"name = \"F\""];
     }] fetch:&error];
     XCTAssertEqual(objs.count, 1, @"Query count equals");
     XCTAssertEqual(objs[0].objId, 1000, @"name");
     XCTAssertNil(error, @"Error: %@", error);
+    
+    TestItem *obj = objs[0];
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = \"G\""];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 0, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
     
     sem = dispatch_semaphore_create(0);
     dispatch_async(bgQueue, ^{
@@ -212,23 +220,138 @@
     });
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     
-    objs = [[TestItem query] fetch:&error];
-    XCTAssertEqual(objs.count, 6, @"Query count equals");
-    XCTAssertNil(error, @"Error: %@", error);
     
-    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
-        [config filterWithFormat:@"name = \"G\""];
-    }] fetch:&error];
-    XCTAssertEqual(objs.count, 1, @"Query count equals");
-    XCTAssertEqual(objs[0].objId, 1001, @"objid");
-    XCTAssertNil(error, @"Error: %@", error);
+    sem = dispatch_semaphore_create(0);
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            NSError *error = nil;
+            NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+            XCTAssertEqual(objs.count, 6, @"Query count equals");
+            XCTAssertNil(error, @"Error: %@", error);
+            
+            objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+                [config filterWithFormat:@"name = \"G\""];
+            }] fetch:&error];
+            XCTAssertEqual(objs.count, 1, @"Query count equals");
+            XCTAssertEqual(objs[0].objId, 1001, @"objid");
+            XCTAssertNil(error, @"Error: %@", error);
+            
+            objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+                [config filterWithFormat:@"name = \"F\""];
+            }] fetch:&error];
+            XCTAssertEqual(objs.count, 0, @"Query count equals");
+            XCTAssertNil(error, @"Error: %@", error);
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     
-    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
-        [config filterWithFormat:@"name = \"F\""];
-    }] fetch:&error];
-    XCTAssertEqual(objs.count, 0, @"Query count equals");
+}
+
+- (void)testMultiCreate {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            NSArray<TestItem *> *items = [TestItem createBatch:10];
+            for (TestItem *item in items) {
+                item.name = @"B";
+            }
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 15, @"Query count equals");
     XCTAssertNil(error, @"Error: %@", error);
 }
+
+
+- (void)testBasicDictionary {
+    NSError *error = nil;
+    NSArray<NSDictionary *> *objs = [[TestItem query] fetchDictionaryArray:&error];
+    XCTAssertEqual(objs.count, 5, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+}
+
+
+- (void)testDictionaryExpressionGrouping {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            NSArray<TestItem *> *items = [TestItem createBatch:10];
+            int i = 1;
+            for (TestItem *item in items) {
+                item.name = @"TEST";
+                item.objId = i;
+                i++;
+            }
+            
+            i = 1;
+            items = [TestItem createBatch:10];
+            for (TestItem *item in items) {
+                item.name = @"TEST2";
+                item.objId = i;
+                i++;
+            }
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            NSError *error = nil;
+            BOOL caught = NO;
+            @try {
+                NSArray<NSDictionary *> *objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+                    [config groupBy:@[@"name"]];
+                }] fetchDictionaryArray:&error];
+                XCTAssertEqual(objs.count, 1, @"This shouldn't assert because it will try/catch before");
+            }
+            @catch (CdException *c) {
+                caught = YES;
+            }
+            XCTAssertEqual(caught, YES, @"should have caught exception for grouping w/o properties");
+            
+            
+            NSArray<NSDictionary *> *objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+                [config includeExpressionNamed:@"sum" resultType:NSInteger64AttributeType format:@"@sum.objId"];
+                [config includeExpressionNamed:@"count" resultType:NSInteger64AttributeType format:@"name.@count"];
+                [config onlyProperties:@[@"name", @"sum", @"count"]];
+                [config groupBy:@[@"name"]];
+            }] fetchDictionaryArray:&error];
+            XCTAssertEqual(objs.count, 7, @"Query count equals");
+            
+            int wastested = 0;
+            for (NSDictionary *dic in objs) {
+                if ([@"TEST" isEqualToString:dic[@"name"]]) {
+                    XCTAssertEqual([dic[@"sum"] integerValue], 55, "sum difference");
+                    XCTAssertEqual([dic[@"count"] integerValue], 10, "sum difference");
+                    wastested = 1;
+                }
+                
+                if ([@"TEST2" isEqualToString:dic[@"name"]]) {
+                    XCTAssertEqual([dic[@"sum"] integerValue], 55, "sum difference");
+                    XCTAssertEqual([dic[@"count"] integerValue], 10, "sum difference");
+                }
+            }
+            XCTAssertEqual(wastested, 1, @"not tested");
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+}
+
 
 
 - (void)initData {
