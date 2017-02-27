@@ -36,3 +36,9 @@
 @implementation CdFetchException
 @end
 
+@implementation CdCreateException
+@end
+
+@implementation CdDeleteException
+@end
+

@@ -13,6 +13,8 @@
 #import "CdManagedObject.h"
 #import "CdFetchRequest.h"
 
+extern BOOL s_cadmium_defaultSerialTransactions;
+
 @interface CdManagedObjectContext (Internal)
 
 + (nonnull CdManagedObjectContext *)mainThreadContext;
@@ -20,6 +22,8 @@
 + (nonnull CdManagedObjectContext *)newBackgroundContext;
 + (void)saveMasterWriteContext:(NSError * _Nullable * _Nullable)error;
 
++ (nonnull dispatch_queue_t)serialTransactionQueue;
++ (nonnull dispatch_queue_t)concurrentTransactionQueue;
 
 @end
 

@@ -14,12 +14,15 @@
 
 static CdManagedObjectContext * _mainThreadContext = nil;
 static CdManagedObjectContext * _masterSaveContext = nil;
+
 static dispatch_queue_t serialTransactionQueue;
+static dispatch_queue_t concurrentTransactionQueue;
 
 @implementation CdManagedObjectContext
 
 + (void)initializeMasterContexts:(NSPersistentStoreCoordinator * _Nonnull)coordinator {
     serialTransactionQueue = dispatch_queue_create("Cd.ManagedObjectContext.serialTransactionQueue", DISPATCH_QUEUE_SERIAL);
+    concurrentTransactionQueue = dispatch_queue_create("Cd.ManagedObjectContext.concurrentTransactionQueue", DISPATCH_QUEUE_CONCURRENT);
     
     _masterSaveContext = [[CdManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     _masterSaveContext.undoManager = nil;
@@ -76,6 +79,14 @@ static dispatch_queue_t serialTransactionQueue;
 
 
 @implementation CdManagedObjectContext (Internal)
+
++ (nonnull dispatch_queue_t)serialTransactionQueue {
+    return serialTransactionQueue;
+}
+
++ (nonnull dispatch_queue_t)concurrentTransactionQueue {
+    return concurrentTransactionQueue;
+}
 
 + (nonnull CdManagedObjectContext *)mainThreadContext {
     if (!_mainThreadContext) {

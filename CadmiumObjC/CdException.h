@@ -23,3 +23,9 @@
 
 @interface CdFetchException : CdException
 @end
+
+@interface CdCreateException : CdException
+@end
+
+@interface CdDeleteException : CdException
+@end

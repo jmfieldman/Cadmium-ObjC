@@ -31,5 +31,6 @@
 
 - (nullable NSArray<T> *)fetch:(NSError * _Nullable * _Nullable)error;
 - (nullable NSArray<NSDictionary *> *)fetchDictionaryArray:(NSError * _Nullable * _Nullable)error;
+- (nullable T)fetchOne:(NSError * _Nullable * _Nullable)error;
 
 @end

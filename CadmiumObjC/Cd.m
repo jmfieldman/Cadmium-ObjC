@@ -12,8 +12,9 @@
 #import "CdInternal.h"
 #import "CdException.h"
 #import "CdManagedObjectContext.h"
+#import "NSThread+Cadmium.h"
 
-static BOOL s_defaultSerialTransactions = YES;
+BOOL s_cadmium_defaultSerialTransactions = YES;
 
 @implementation Cd
 
@@ -51,13 +52,157 @@ static BOOL s_defaultSerialTransactions = YES;
                  options:(nullable NSDictionary*)options
                 serialTX:(BOOL)serialTX {
     
-    s_defaultSerialTransactions = serialTX;
+    s_cadmium_defaultSerialTransactions = serialTX;
     
     [Cd initWithSQLStore:momdURL
                sqliteURL:sqliteURL
                  options:options];
     
     
+}
+
+
+
++ (void)transact:(nonnull CdTransactionBlock)block {
+    [Cd transact:block completion:nil];
+}
+
++ (void)transact:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion {
+    dispatch_queue_t queue = s_cadmium_defaultSerialTransactions
+                             ? CdManagedObjectContext.serialTransactionQueue
+                             : CdManagedObjectContext.concurrentTransactionQueue;
+    [Cd transactOnQueue:queue block:block completion:completion];
+}
+
++ (void)transactOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion {
+    dispatch_async(queue, ^{
+        CdManagedObjectContext *newContext = [CdManagedObjectContext newBackgroundContext];
+        __block NSError *error = nil;
+        [newContext performBlockAndWait:^{
+            NSThread *currentThread = NSThread.currentThread;
+            BOOL prevInside = currentThread.insideTransaction;
+            currentThread.insideTransaction = YES;
+            error = [Cd _transactOperationFromContext:newContext operation:block];
+            currentThread.insideTransaction = prevInside;
+        }];
+        if (completion) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(error);
+            });
+        }
+    });
+}
+
++ (nullable NSError *)transactAndWait:(nonnull CdTransactionBlock)block {
+    dispatch_queue_t queue = s_cadmium_defaultSerialTransactions
+                             ? CdManagedObjectContext.serialTransactionQueue
+                             : CdManagedObjectContext.concurrentTransactionQueue;
+    return [Cd transactAndWaitOnQueue:queue block:block];
+}
+
++ (nullable NSError *)transactAndWaitOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block {
+    if (NSThread.currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"You cannot perform transactAndWait on the main thread.  Use transact, or spin off a new background thread to call transactAndWait"];
+    }
+    
+    __block NSError *error = nil;
+    
+    dispatch_sync(queue, ^{
+        CdManagedObjectContext *newContext = [CdManagedObjectContext newBackgroundContext];
+        [newContext performBlockAndWait:^{
+            NSThread *currentThread = NSThread.currentThread;
+            BOOL prevInside = currentThread.insideTransaction;
+            currentThread.insideTransaction = YES;
+            error = [Cd _transactOperationFromContext:newContext operation:block];
+            currentThread.insideTransaction = prevInside;
+        }];
+    });
+    
+    return error;
+}
+
+
+
+
+
++ (nullable NSError *)_transactOperationFromContext:(nonnull CdManagedObjectContext *)fromContext
+                                          operation:(nonnull CdTransactionBlock)block {
+    
+    NSThread *currentThread = NSThread.currentThread;
+    CdManagedObjectContext *attachedContext = currentThread.attachedContext;
+    BOOL origNoImplicitCommit = currentThread.noImplicitCommit;
+    
+    currentThread.attachedContext = fromContext;
+    block();
+    
+    NSError *error = nil;
+    if (currentThread.noImplicitCommit == NO) {
+        error = [Cd commit];
+    }
+    
+    currentThread.attachedContext = attachedContext;
+    currentThread.noImplicitCommit = origNoImplicitCommit;
+    
+    return error;
+}
+
+
++ (void)cancelImplicitCommit {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"The main thread does have a transaction context that can be committed."];
+    }
+    
+    if (!currentThread.attachedContext) {
+        [CdException raiseWithFormat:@"You many only cancel a commit from inside a valid transaction."];
+    }
+    
+    currentThread.noImplicitCommit = YES;
+}
+
+
++ (nonnull CdManagedObjectContext *)transactionContext {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"The main thread cannot have a valid transaction context."];
+    }
+    
+    CdManagedObjectContext *currentContext = currentThread.attachedContext;
+    if (!currentContext) {
+        [CdException raiseWithFormat:@"transactionContext is only valid from inside a valid transaction."];
+    }
+    
+    return currentContext;
+}
+
+
++ (nullable NSError *)commit {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"You can only commit changes inside of a transaction (the main thread is read-only)."];
+    }
+    
+    CdManagedObjectContext *currentContext = currentThread.attachedContext;
+    if (!currentContext) {
+        [CdException raiseWithFormat:@"You can only commit changes inside of a transaction."];
+    }
+    
+    NSError *error = nil;
+    if (currentContext.hasChanges) {
+        [currentContext save:&error];
+        
+        if (error) {
+            return error;
+        }
+        
+        [CdManagedObjectContext saveMasterWriteContext:&error];
+        
+        if (error) {
+            return error;
+        }
+    }
+    
+    return nil;
 }
 
 

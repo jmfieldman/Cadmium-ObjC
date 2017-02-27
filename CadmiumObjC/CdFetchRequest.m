@@ -201,8 +201,30 @@
     return results;
 }
 
+- (nullable id)fetchOne:(NSError * _Nullable * _Nullable)error {
+    _nsFetchRequest.fetchLimit = 1;
+    NSArray *result = [self fetch:error];
+    if (result.count > 0) {
+        return result[0];
+    }
+    return nil;
+}
 
-
+- (NSUInteger)count:(NSError * _Nullable * _Nullable)error {
+    CdManagedObjectContext *currentContext = NSThread.currentThread.attachedContext;
+    if (!currentContext) {
+        [CdFetchException raiseWithFormat:@"You cannot fetch data from a non-transactional background thread.  You may only query from the main thread or from inside a transaction."];
+    }
+    
+    NSError *internalError = nil;
+    NSUInteger result = [currentContext countForFetchRequest:_nsFetchRequest error:&internalError];
+    
+    if (internalError) {
+        *error = internalError;
+    }
+    
+    return result;
+}
 
 
 

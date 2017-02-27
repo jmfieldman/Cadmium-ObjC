@@ -8,6 +8,31 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^CdTransactionBlock)();
+typedef void (^CdCompletionBlock)(NSError * _Nullable error);
+
+@class CdManagedObjectContext;
+
 @interface Cd : NSObject
+
+
++ (void)initWithSQLStore:(nonnull NSURL*)momdURL
+               sqliteURL:(nonnull NSURL*)sqliteURL
+                 options:(nullable NSDictionary*)options;
+
++ (void)initWithSQLStore:(nonnull NSURL*)momdURL
+               sqliteURL:(nonnull NSURL*)sqliteURL
+                 options:(nullable NSDictionary*)options
+                serialTX:(BOOL)serialTX;
+
++ (void)transact:(nonnull CdTransactionBlock)block;
++ (void)transact:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;
++ (void)transactOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;
++ (nullable NSError *)transactAndWait:(nonnull CdTransactionBlock)block;
++ (nullable NSError *)transactAndWaitOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block;
+
++ (void)cancelImplicitCommit;
++ (nonnull CdManagedObjectContext *)transactionContext;
++ (nullable NSError *)commit;
 
 @end
