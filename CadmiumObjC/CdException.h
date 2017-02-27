@@ -15,6 +15,9 @@
 @interface CdInvalidMOMDException : CdException
 @end
 
+@interface CdInvalidBundleException : CdException
+@end
+
 @interface CdPersistentStoreError : CdException
 @end
 

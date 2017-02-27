@@ -27,6 +27,9 @@
 @implementation CdInvalidMOMDException
 @end
 
+@implementation CdInvalidBundleException
+@end
+
 @implementation CdPersistentStoreError
 @end
 

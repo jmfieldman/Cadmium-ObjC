@@ -25,6 +25,12 @@ typedef void (^CdCompletionBlock)(NSError * _Nullable error);
                  options:(nullable NSDictionary*)options
                 serialTX:(BOOL)serialTX;
 
++ (void)initWithMomd:(nonnull NSString*)momdName
+            bundleID:(nullable NSString*)bundleID
+      sqliteFilename:(nonnull NSString*)sqliteFilename
+             options:(nullable NSDictionary *)options
+            serialTX:(BOOL)serialTX;
+
 + (void)transact:(nonnull CdTransactionBlock)block;
 + (void)transact:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;
 + (void)transactOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;

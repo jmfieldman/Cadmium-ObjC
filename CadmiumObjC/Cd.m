@@ -61,6 +61,38 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
     
 }
 
++ (void)initWithMomd:(nonnull NSString*)momdName
+            bundleID:(nullable NSString*)bundleID
+      sqliteFilename:(nonnull NSString*)sqliteFilename
+             options:(nullable NSDictionary *)options
+            serialTX:(BOOL)serialTX {
+    
+    NSBundle *bundle = (bundleID == nil)
+                       ? [NSBundle mainBundle]
+                       : [NSBundle bundleWithIdentifier:bundleID];
+    
+    if (!bundle) {
+        [CdInvalidBundleException raiseWithFormat:@"Invalid bundle ID: %@", bundleID];
+    }
+    
+    NSString *actualMomd = momdName;
+    if ([[actualMomd pathExtension] isEqualToString:@"momd"]) {
+        actualMomd = [actualMomd stringByDeletingPathExtension];
+    }
+    
+    NSURL *momdUrl = [bundle URLForResource:actualMomd withExtension:@"momd"];
+    if (!momdUrl) {
+        [CdInvalidMOMDException raiseWithFormat:@"Could not create momd url: %@", momdName];
+    }
+    
+    NSArray<NSURL *> *urls = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+    NSURL *docDir = urls[0];
+    NSURL *sqlDir = [docDir URLByAppendingPathComponent:sqliteFilename];
+    
+    [[NSFileManager defaultManager] createDirectoryAtURL:docDir withIntermediateDirectories:YES attributes:nil error:nil];
+    [Cd initWithSQLStore:momdUrl sqliteURL:sqlDir options:options serialTX:serialTX];
+}
+
 
 
 + (void)transact:(nonnull CdTransactionBlock)block {

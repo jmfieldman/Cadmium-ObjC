@@ -24,6 +24,8 @@
 		35978FAA1E635762009570A5 /* NSThread+Cadmium.m in Sources */ = {isa = PBXBuildFile; fileRef = 35978FA81E635762009570A5 /* NSThread+Cadmium.m */; };
 		35978FAD1E636240009570A5 /* CdUpdateNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 35978FAB1E636240009570A5 /* CdUpdateNode.h */; };
 		35978FAE1E636240009570A5 /* CdUpdateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 35978FAC1E636240009570A5 /* CdUpdateNode.m */; };
+		35978FB11E63A750009570A5 /* CadmiumTestModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35978FAF1E63A750009570A5 /* CadmiumTestModel.xcdatamodeld */; };
+		35978FB41E63A7B8009570A5 /* TestItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 35978FB31E63A7B8009570A5 /* TestItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,9 @@
 		35978FA81E635762009570A5 /* NSThread+Cadmium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Cadmium.m"; sourceTree = "<group>"; };
 		35978FAB1E636240009570A5 /* CdUpdateNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdUpdateNode.h; sourceTree = "<group>"; };
 		35978FAC1E636240009570A5 /* CdUpdateNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdUpdateNode.m; sourceTree = "<group>"; };
+		35978FB01E63A750009570A5 /* CadmiumTestModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CadmiumTestModel.xcdatamodel; sourceTree = "<group>"; };
+		35978FB21E63A7B8009570A5 /* TestItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestItem.h; sourceTree = "<group>"; };
+		35978FB31E63A7B8009570A5 /* TestItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +132,9 @@
 			children = (
 				35978F841E6349F8009570A5 /* CadmiumObjCTests.m */,
 				35978F861E6349F8009570A5 /* Info.plist */,
+				35978FAF1E63A750009570A5 /* CadmiumTestModel.xcdatamodeld */,
+				35978FB21E63A7B8009570A5 /* TestItem.h */,
+				35978FB31E63A7B8009570A5 /* TestItem.m */,
 			);
 			path = CadmiumObjCTests;
 			sourceTree = "<group>";
@@ -205,6 +213,7 @@
 					35978F7E1E6349F8009570A5 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = GGY9Q9R73R;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -263,7 +272,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35978FB11E63A750009570A5 /* CadmiumTestModel.xcdatamodeld in Sources */,
 				35978F851E6349F8009570A5 /* CadmiumObjCTests.m in Sources */,
+				35978FB41E63A7B8009570A5 /* TestItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,22 +424,27 @@
 		35978F8E1E6349F8009570A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = GGY9Q9R73R;
 				INFOPLIST_FILE = CadmiumObjCTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.fieldman.CadmiumObjCTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		35978F8F1E6349F8009570A5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = GGY9Q9R73R;
 				INFOPLIST_FILE = CadmiumObjCTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.fieldman.CadmiumObjCTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -461,6 +477,19 @@
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		35978FAF1E63A750009570A5 /* CadmiumTestModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				35978FB01E63A750009570A5 /* CadmiumTestModel.xcdatamodel */,
+			);
+			currentVersion = 35978FB01E63A750009570A5 /* CadmiumTestModel.xcdatamodel */;
+			path = CadmiumTestModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 35978F6D1E6349F8009570A5 /* Project object */;
 }
