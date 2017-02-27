@@ -19,6 +19,7 @@
 - (void)orWithPredicate:(nonnull NSPredicate *)predicate;
 - (void)orWithFormat:(nonnull NSString * const)format, ...;
 - (void)sortByProperty:(nonnull NSString *)property;
+- (void)sortByProperty:(nonnull NSString *)property ascending:(BOOL)ascending;
 - (void)sortByDescriptor:(nonnull NSSortDescriptor *)descriptor;
 - (void)includeExpressionNamed:(nonnull NSString *)name resultType:(NSAttributeType)type format:(nonnull NSString * const)format, ...;
 - (void)onlyProperties:(nonnull NSArray<NSString *> *)properties;

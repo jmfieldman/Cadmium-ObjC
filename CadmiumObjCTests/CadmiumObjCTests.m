@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import <CoreData/CoreData.h>
 #import "Cd.h"
+#import "CdFetchRequest.h"
 #import "TestItem.h"
 
 @interface CadmiumObjCTests : XCTestCase
@@ -35,18 +36,110 @@
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+//- (void)testExample {
+//    // This is an example of a functional test case.
+//    // Use XCTAssert and related functions to verify your tests produce the correct results.
+//}
+//
+//- (void)testPerformanceExample {
+//    // This is an example of a performance test case.
+//    [self measureBlock:^{
+//        // Put the code you want to measure the time of here.
+//    }];
+//}
+
+
+- (void)testBasicQueries {
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = %@", @"C"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name < %@", @"C"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 2, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId = 4"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId < 4"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 3, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId < 4"];
+        [config setLimit:2];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 2, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+
+- (void)testSortingQueries {
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId > %d AND objId < %d", 1, 5];
+        [config sortByProperty:@"objId"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 3, @"Query count equals");
+    XCTAssertEqual(objs[0].objId, 2, @"Query sorting");
+    XCTAssertEqual(objs[1].objId, 3, @"Query sorting");
+    XCTAssertEqual(objs[2].objId, 4, @"Query sorting");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId > %d AND objId < %d", 1, 5];
+        [config sortByProperty:@"objId" ascending:NO];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 3, @"Query count equals");
+    XCTAssertEqual(objs[0].objId, 4, @"Query sorting");
+    XCTAssertEqual(objs[1].objId, 3, @"Query sorting");
+    XCTAssertEqual(objs[2].objId, 2, @"Query sorting");
+    XCTAssertNil(error, @"Error: %@", error);
 }
 
+
+- (void)testBasicModification {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            NSError *error = nil;
+            TestItem *item = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+                [config filterWithFormat:@"objId = 1"];
+            }] fetchOne:&error];
+            XCTAssertNil(error, @"error: %@", error);
+            item.name = @"111";
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId = 1"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssert([objs[0].name isEqualToString:@"111"], @"name");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = \"111\""];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertEqual(objs[0].objId, 1, @"name");
+    XCTAssertNil(error, @"Error: %@", error);
+}
 
 
 - (void)initData {
@@ -68,11 +161,11 @@
             items[4].name  = @"E";
         }];
         
+        dispatch_semaphore_signal(semaphore);
+        
         if (error) {
             XCTFail(@"initData error: %@", error);
         }
-        
-        dispatch_semaphore_signal(semaphore);
     });
     
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
@@ -89,7 +182,7 @@
 
 - (void)initCd {
     [Cd initWithMomd:@"CadmiumTestModel"
-            bundleID:nil
+            bundleID:@"org.fieldman.CadmiumObjCTests"
       sqliteFilename:[NSString stringWithFormat:@"%@.sqlite", self.cleanName]
              options:@{
                        NSSQLitePragmasOption: @{

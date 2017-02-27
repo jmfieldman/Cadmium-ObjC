@@ -31,7 +31,7 @@ typedef void (^CdObjectTransactionBlock)(CdManagedObject * _Nullable clone, NSEr
 - (void)removeUpdateHandlersAnchoredBy:(nullable id)anchor;
 
 + (nonnull CdFetchRequest *)query;
-+ (nonnull CdFetchRequest *)queryWith:(nonnull CdManagedObjectQueryConfig)config;
++ (nonnull CdFetchRequest *)query:(nonnull CdManagedObjectQueryConfig)config;
 
 + (nonnull instancetype)create;
 + (nonnull instancetype)createTransient;

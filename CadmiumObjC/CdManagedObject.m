@@ -159,7 +159,7 @@
     return [[CdFetchRequest alloc] initWithEntityName:NSStringFromClass([self class])];
 }
 
-+ (nonnull CdFetchRequest *)queryWith:(nonnull CdManagedObjectQueryConfig)config {
++ (nonnull CdFetchRequest *)query:(nonnull CdManagedObjectQueryConfig)config {
     CdFetchRequest *request = [[CdFetchRequest alloc] initWithEntityName:self._entityName];
     config(request);
     return request;
@@ -216,7 +216,7 @@
     
     NSMutableArray *objects = [NSMutableArray arrayWithCapacity:quantity];
     
-    for (NSUInteger i = quantity; i > 0; i++) {
+    for (NSUInteger i = quantity; i > 0; i--) {
         CdManagedObject *object = [[CdManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:currentContext];
         [objects addObject:object];
     }
