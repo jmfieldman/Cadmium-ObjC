@@ -142,6 +142,95 @@
 }
 
 
+- (void)testBasicCreate {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            TestItem *item = [TestItem create];
+            item.objId = 1000;
+            item.name = @"F";
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 6, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = \"F\""];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertEqual(objs[0].objId, 1000, @"name");
+    XCTAssertNil(error, @"Error: %@", error);
+}
+
+
+- (void)testBasicClone {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            TestItem *item = [TestItem create];
+            item.objId = 1000;
+            item.name = @"F";
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 6, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    TestItem *obj = objs[0];
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = \"F\""];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertEqual(objs[0].objId, 1000, @"name");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    sem = dispatch_semaphore_create(0);
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            NSError *error = nil;
+            TestItem *obj2 = [obj cloneForCurrentContext:&error];
+            obj2.objId = 1001;
+            obj2.name = @"G";
+            XCTAssertNil(error, @"Error: %@", error);
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 6, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = \"G\""];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertEqual(objs[0].objId, 1001, @"objid");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"name = \"F\""];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 0, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+}
+
+
 - (void)initData {
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
