@@ -15,6 +15,7 @@
 
 @implementation CdManagedObject {
     NSMutableSet<CdUpdateNode *> *_updateNodes;
+    BOOL _wasInserted;
 }
 
 - (void)addUpdateHandler:(nonnull CdManagedObjectUpdateHandler)handler anchor:(id)anchor {
@@ -60,7 +61,7 @@
 
 - (void)willAccessValueForKey:(NSString *)key {
     NSManagedObjectContext *myManangedObjectContext = self.managedObjectContext;
-    if (!myManangedObjectContext) {
+    if (!myManangedObjectContext && !_wasInserted) {
         [super willAccessValueForKey:key];
         return;
     }
@@ -90,7 +91,7 @@
 
 - (void)willChangeValueForKey:(NSString *)key {
     NSManagedObjectContext *myManangedObjectContext = self.managedObjectContext;
-    if (!myManangedObjectContext) {
+    if (!myManangedObjectContext && !_wasInserted) {
         [super willChangeValueForKey:key];
         return;
     }
@@ -191,6 +192,7 @@
         [CdCreateException raiseWithFormat:@"Could not obtain ID for object: %@", error];
     }
     
+    object.wasInserted = YES;
     return object;
 }
 
@@ -218,6 +220,7 @@
     
     for (NSUInteger i = quantity; i > 0; i--) {
         CdManagedObject *object = [[CdManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:currentContext];
+        object.wasInserted = YES;
         [objects addObject:object];
     }
     
@@ -255,6 +258,14 @@
 
 
 - (void)insert {
+    if (self.managedObjectContext != nil) {
+        [CdException raiseWithFormat:@"You cannot insert an object into a context that already belongs to another context.  Use cloneForCurrentContext: instead."];
+    }
+    
+    if (_wasInserted) {
+        [CdException raiseWithFormat:@"This object has already been inserted into a different context."];
+    }
+    
     NSThread *currentThread = NSThread.currentThread;
     if (currentThread.isMainThread) {
         [CdMainThreadAssertion raiseWithFormat:@"You cannot insert an object from the main thread."];
@@ -265,20 +276,13 @@
         [CdException raiseWithFormat:@"You may only insert a new managed object from inside a valid transaction."];
     }
     
-    if (currentContext == self.managedObjectContext) {
-        // Already inserted
-        return;
-    }
-    
-    if (self.managedObjectContext != nil) {
-        [CdException raiseWithFormat:@"You cannot insert an object into a context that already belongs to another context.  Use cloneForCurrentContext: instead."];
-    }
-    
     NSArray<NSString *> *keys = self.entity.attributesByName.allKeys;
     NSDictionary *attrs = [self dictionaryWithValuesForKeys:keys];
     [currentContext insertObject:self];
     [currentContext refreshObject:self mergeChanges:YES];
     [self setValuesForKeysWithDictionary:attrs];
+    
+    _wasInserted = YES;
 }
 
 
@@ -299,6 +303,7 @@
     
     NSError *internalError = nil;
     CdManagedObject *clone = [currentContext existingObjectWithID:self.objectID error:&internalError];
+    clone.wasInserted = YES;
     
     if (error) {
         *error = internalError;
@@ -369,6 +374,14 @@
     if (needsCleaning) {
         [self removeUpdateHandlersAnchoredBy:nil];
     }
+}
+
+- (void)setWasInserted:(BOOL)wasInserted {
+    _wasInserted = wasInserted;
+}
+
+- (BOOL)wasInserted {
+    return _wasInserted;
 }
 
 @end

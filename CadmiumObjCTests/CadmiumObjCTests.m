@@ -13,12 +13,24 @@
 #import "CdException.h"
 #import "TestItem.h"
 
-@interface CadmiumObjCTests : XCTestCase
+typedef void (^CdExceptionCatchBlock)(void);
 
+@interface CadmiumObjCTests : XCTestCase
+@property (atomic, assign) BOOL hasInit;
 @end
 
 @implementation CadmiumObjCTests {
     dispatch_queue_t bgQueue;
+}
+
+- (nullable CdException *)catchException:(CdExceptionCatchBlock)block {
+    @try {
+        block();
+    }
+    @catch (CdException *e) {
+        return e;
+    }
+    return nil;
 }
 
 - (void)setUp {
@@ -428,6 +440,163 @@
 }
 
 
+
+- (void)testForbidModificationOnMainThread {
+    NSError *error = nil;
+    TestItem *objs = [[TestItem query] fetchOne:&error];
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    CdException *e = [self catchException:^{
+        objs.name = @"moo";
+    }];
+    
+    XCTAssert([e isKindOfClass:[CdMainThreadAssertion class]]);
+}
+
+
+- (void)testForModificationMainInOtherTx {
+    NSError *error = nil;
+    TestItem *objs = [[TestItem query] fetchOne:&error];
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    {
+        dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+        dispatch_async(bgQueue, ^{
+            NSError *error = [Cd transactAndWait:^{
+                
+                [Cd transactAndWait:^{
+                    CdException *e = [self catchException:^{
+                        objs.name = @"moo";
+                    }];
+                    
+                    XCTAssert([e isKindOfClass:[CdException class]]);
+                }];
+                
+            }];
+            XCTAssertNil(error, @"error: %@", error);
+            dispatch_semaphore_signal(sem);
+        });
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+}
+
+- (void)testForModificationInOtherTx {
+    
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            __block TestItem *item;
+            
+            [Cd transactAndWait:^{
+                item = [TestItem create];
+                item.name = @"bob";
+                item.objId = 1;
+            }];
+            
+            [Cd transactAndWait:^{
+                CdException *e = [self catchException:^{
+                    item.name = @"moo";
+                }];
+                
+                XCTAssert([e isKindOfClass:[CdException class]]);
+            }];
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+
+}
+
+- (void)testForModificationInOtherTx2 {
+    __block BOOL wasTested = NO;
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            __block TestItem *item;
+            __block NSManagedObjectContext *c_holder;
+            
+            [Cd transactAndWait:^{
+                item = [TestItem create];
+                item.name = @"bob";
+                item.objId = 1;
+                c_holder = item.managedObjectContext;
+            }];
+            
+            [Cd transactAndWait:^{
+                CdException *e = [self catchException:^{
+                    item.name = @"moo";
+                }];
+                
+                XCTAssert([e isKindOfClass:[CdException class]]);
+                wasTested = YES;
+            }];
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    XCTAssert(wasTested, @"Not tested");
+}
+
+
+- (void)testForbidReusingTransient {
+    __block BOOL wasTested = NO;
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            __block TestItem *item;
+            
+            [Cd transactAndWait:^{
+                item = [TestItem createTransient];
+                item.name = @"bob";
+                item.objId = 1;
+            }];
+            
+            [Cd transactAndWait:^{
+                CdException *e = [self catchException:^{
+                    item = [item cloneForCurrentContext:nil];
+                }];
+                
+                XCTAssert([e isKindOfClass:[CdException class]]);
+                wasTested = YES;
+            }];
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    XCTAssert(wasTested, @"Not tested");
+}
+
+
+- (void)testForbidCreateMain {
+    CdException *e = [self catchException:^{
+        TestItem *item = [TestItem create];
+        item.objId = 1;
+    }];
+    
+    XCTAssert([e isKindOfClass:[CdException class]]);
+}
+
+- (void)testForbidDeleteMain {
+    TestItem *item = [[TestItem query] fetchOne:nil];
+    CdException *e = [self catchException:^{
+        [item destroy];
+    }];
+    
+    XCTAssert([e isKindOfClass:[CdException class]]);
+}
+
+
+
 - (void)initData {
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
@@ -467,6 +636,9 @@
 }
 
 - (void)initCd {
+    if (self.hasInit) { return; }
+    self.hasInit = YES;
+    
     [Cd initWithMomd:@"CadmiumTestModel"
             bundleID:@"org.fieldman.CadmiumObjCTests"
       sqliteFilename:[NSString stringWithFormat:@"%@.sqlite", self.cleanName]

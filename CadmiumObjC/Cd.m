@@ -133,8 +133,14 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
 }
 
 + (nullable NSError *)transactAndWaitOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block {
-    if (NSThread.currentThread.isMainThread) {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
         [CdMainThreadAssertion raiseWithFormat:@"You cannot perform transactAndWait on the main thread.  Use transact, or spin off a new background thread to call transactAndWait"];
+    }
+    
+    // Protect against running synchronously inside existing serial queue 
+    if (queue == CdManagedObjectContext.serialTransactionQueue && currentThread.insideTransaction) {
+        queue = CdManagedObjectContext.concurrentTransactionQueue;
     }
     
     __block NSError *error = nil;

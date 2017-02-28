@@ -30,6 +30,8 @@ extern BOOL s_cadmium_defaultSerialTransactions;
 
 @interface CdManagedObject (Internal)
 
+@property (nonatomic, assign) BOOL wasInserted;
+
 - (void)notifyUpdateHandlers:(CdManagedObjectUpdateEvent)event;
 
 @end
