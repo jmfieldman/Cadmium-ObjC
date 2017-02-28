@@ -238,4 +238,29 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
 }
 
 
++ (void)destroyBatch:(nonnull NSArray<CdManagedObject *> *)objects {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"You cannot delete an object from the main thread."];
+    }
+    
+    CdManagedObjectContext *currentContext = currentThread.attachedContext;
+    if (!currentContext) {
+        [CdException raiseWithFormat:@"You may only delete a managed object from inside a transaction."];
+    }
+    
+    for (CdManagedObject *object in objects) {
+        if (currentContext != object.managedObjectContext) {
+            [CdException raiseWithFormat:@"You may only delete a managed object from inside the transaction it belongs to."];
+        }
+        
+        if (object.managedObjectContext == nil) {
+            [CdException raiseWithFormat:@"You cannot delete an object that is not in a context."];
+        }
+        
+        [currentContext deleteObject:object];
+    }
+}
+
+
 @end

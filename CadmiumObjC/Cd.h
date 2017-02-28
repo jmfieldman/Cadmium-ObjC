@@ -12,6 +12,7 @@ typedef void (^CdTransactionBlock)();
 typedef void (^CdCompletionBlock)(NSError * _Nullable error);
 
 @class CdManagedObjectContext;
+@class CdManagedObject;
 
 @interface Cd : NSObject
 
@@ -40,5 +41,7 @@ typedef void (^CdCompletionBlock)(NSError * _Nullable error);
 + (void)cancelImplicitCommit;
 + (nonnull CdManagedObjectContext *)transactionContext;
 + (nullable NSError *)commit;
+
++ (void)destroyBatch:(nonnull NSArray<CdManagedObject *> *)objects;
 
 @end

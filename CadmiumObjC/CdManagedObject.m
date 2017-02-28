@@ -231,6 +231,56 @@
     return objects;
 }
 
+- (void)destroy {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"You cannot delete an object from the main thread."];
+    }
+    
+    CdManagedObjectContext *currentContext = currentThread.attachedContext;
+    if (!currentContext) {
+        [CdException raiseWithFormat:@"You may only delete a managed object from inside a transaction."];
+    }
+    
+    if (currentContext != self.managedObjectContext) {
+        [CdException raiseWithFormat:@"You may only delete a managed object from inside the transaction it belongs to."];
+    }
+    
+    if (self.managedObjectContext == nil) {
+        [CdException raiseWithFormat:@"You cannot delete an object that is not in a context."];
+    }
+    
+    [currentContext deleteObject:self];
+}
+
+
+- (void)insert {
+    NSThread *currentThread = NSThread.currentThread;
+    if (currentThread.isMainThread) {
+        [CdMainThreadAssertion raiseWithFormat:@"You cannot insert an object from the main thread."];
+    }
+    
+    CdManagedObjectContext *currentContext = currentThread.attachedContext;
+    if (!currentContext) {
+        [CdException raiseWithFormat:@"You may only insert a new managed object from inside a valid transaction."];
+    }
+    
+    if (currentContext == self.managedObjectContext) {
+        // Already inserted
+        return;
+    }
+    
+    if (self.managedObjectContext != nil) {
+        [CdException raiseWithFormat:@"You cannot insert an object into a context that already belongs to another context.  Use cloneForCurrentContext: instead."];
+    }
+    
+    NSArray<NSString *> *keys = self.entity.attributesByName.allKeys;
+    NSDictionary *attrs = [self dictionaryWithValuesForKeys:keys];
+    [currentContext insertObject:self];
+    [currentContext refreshObject:self mergeChanges:YES];
+    [self setValuesForKeysWithDictionary:attrs];
+}
+
 
 - (nullable instancetype)cloneForCurrentContext:(NSError * _Nullable * _Nullable)error {
     CdManagedObjectContext *currentContext = NSThread.currentThread.attachedContext;

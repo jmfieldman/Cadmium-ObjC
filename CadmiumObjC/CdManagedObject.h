@@ -37,6 +37,9 @@ typedef void (^CdObjectTransactionBlock)(CdManagedObject * _Nullable clone, NSEr
 + (nonnull instancetype)createTransient;
 + (nonnull NSArray *)createBatch:(NSUInteger)quantity;
 
+- (void)destroy;
+- (void)insert;
+
 - (nullable instancetype)cloneForCurrentContext:(NSError * _Nullable * _Nullable)error;
 - (void)transact:(nonnull CdObjectTransactionBlock)block;
 - (void)transact:(nonnull CdObjectTransactionBlock)block completion:(nullable CdCompletionBlock)completion;

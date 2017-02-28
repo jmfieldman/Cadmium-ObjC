@@ -352,6 +352,80 @@
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
 }
 
+- (void)testBasicDelete {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            TestItem *item = [[TestItem query] fetchOne:nil];
+            [item destroy];
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 4, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+}
+
+- (void)testMultiDelete {
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            NSArray<TestItem *> *items = [[TestItem query] fetch:nil];
+            [Cd destroyBatch:items];
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 0, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+}
+
+
+- (void)testCreateTransientMainInsertLater {
+    
+    TestItem *item = [TestItem createTransient];
+    item.name = @"asdf";
+    item.objId = 1000;
+    
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    dispatch_async(bgQueue, ^{
+        NSError *error = [Cd transactAndWait:^{
+            
+            [Cd transactAndWait:^{
+                [item insert];
+            }];
+            
+        }];
+        XCTAssertNil(error, @"error: %@", error);
+        dispatch_semaphore_signal(sem);
+    });
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    
+    NSError *error = nil;
+    NSArray<TestItem *> *objs = [[TestItem query] fetch:&error];
+    XCTAssertEqual(objs.count, 6, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+    
+    objs = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+        [config filterWithFormat:@"objId = 1000"];
+    }] fetch:&error];
+    XCTAssertEqual(objs.count, 1, @"Query count equals");
+    XCTAssertNil(error, @"Error: %@", error);
+}
 
 
 - (void)initData {
