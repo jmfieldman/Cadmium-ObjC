@@ -126,19 +126,23 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
 }
 
 + (nullable NSError *)transactAndWait:(nonnull CdTransactionBlock)block {
-    dispatch_queue_t queue = s_cadmium_defaultSerialTransactions
-                             ? CdManagedObjectContext.serialTransactionQueue
-                             : CdManagedObjectContext.concurrentTransactionQueue;
-    return [Cd transactAndWaitOnQueue:queue block:block];
+    return [Cd transactAndWaitOnQueue:nil block:block];
 }
 
-+ (nullable NSError *)transactAndWaitOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block {
++ (nullable NSError *)transactAndWaitOnQueue:(nullable dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block {
     NSThread *currentThread = NSThread.currentThread;
     if (currentThread.isMainThread) {
         [CdMainThreadAssertion raiseWithFormat:@"You cannot perform transactAndWait on the main thread.  Use transact, or spin off a new background thread to call transactAndWait"];
     }
     
-    // Protect against running synchronously inside existing serial queue 
+    // Ensure queue
+    if (queue == nil) {
+        queue = s_cadmium_defaultSerialTransactions
+                ? CdManagedObjectContext.serialTransactionQueue
+                : CdManagedObjectContext.concurrentTransactionQueue;
+    }
+    
+    // Protect against running synchronously inside existing serial queue
     if (queue == CdManagedObjectContext.serialTransactionQueue && currentThread.insideTransaction) {
         queue = CdManagedObjectContext.concurrentTransactionQueue;
     }
