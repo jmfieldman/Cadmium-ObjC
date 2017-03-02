@@ -100,17 +100,36 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
 }
 
 + (void)transact:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion {
-    dispatch_queue_t queue = s_cadmium_defaultSerialTransactions
-                             ? CdManagedObjectContext.serialTransactionQueue
-                             : CdManagedObjectContext.concurrentTransactionQueue;
-    [Cd transactOnQueue:queue block:block completion:completion];
+    [Cd transactOnQueue:nil block:block completion:completion];
 }
 
-+ (void)transactOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion {
-    dispatch_async(queue, ^{
++ (void)transactOnQueue:(nullable dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion {
+    // Ensure queue
+    if (queue == nil && s_cadmium_defaultSerialTransactions) {
+        queue = CdManagedObjectContext.serialTransactionQueue;
+    }
+    
+    if (queue) {
+        dispatch_async(queue, ^{
+            CdManagedObjectContext *newContext = [CdManagedObjectContext newBackgroundContext];
+            __block NSError *error = nil;
+            [newContext performBlockAndWait:^{
+                NSThread *currentThread = NSThread.currentThread;
+                BOOL prevInside = currentThread.insideTransaction;
+                currentThread.insideTransaction = YES;
+                error = [Cd _transactOperationFromContext:newContext operation:block];
+                currentThread.insideTransaction = prevInside;
+            }];
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion(error);
+                });
+            }
+        });
+    } else {
         CdManagedObjectContext *newContext = [CdManagedObjectContext newBackgroundContext];
         __block NSError *error = nil;
-        [newContext performBlockAndWait:^{
+        [newContext performBlock:^{
             NSThread *currentThread = NSThread.currentThread;
             BOOL prevInside = currentThread.insideTransaction;
             currentThread.insideTransaction = YES;
@@ -118,11 +137,13 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
             currentThread.insideTransaction = prevInside;
         }];
         if (completion) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completion(error);
-            });
+            [newContext performBlock:^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion(error);
+                });
+            }];
         }
-    });
+    }
 }
 
 + (nullable NSError *)transactAndWait:(nonnull CdTransactionBlock)block {
@@ -135,21 +156,17 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
         [CdMainThreadAssertion raiseWithFormat:@"You cannot perform transactAndWait on the main thread.  Use transact, or spin off a new background thread to call transactAndWait"];
     }
     
-    // Ensure queue
-    if (queue == nil) {
-        queue = s_cadmium_defaultSerialTransactions
-                ? CdManagedObjectContext.serialTransactionQueue
-                : CdManagedObjectContext.concurrentTransactionQueue;
-    }
-    
-    // Protect against running synchronously inside existing serial queue
-    if (queue == CdManagedObjectContext.serialTransactionQueue && currentThread.insideTransaction) {
-        queue = CdManagedObjectContext.concurrentTransactionQueue;
+    if (currentThread.insideTransaction) {
+        // Protect against running synchronously inside existing transaction
+        queue = nil;
+    } else if (queue == nil && s_cadmium_defaultSerialTransactions) {
+        // Ensure serial queue
+        queue = CdManagedObjectContext.serialTransactionQueue;
     }
     
     __block NSError *error = nil;
     
-    dispatch_sync(queue, ^{
+    void (^transaction)() = ^{
         CdManagedObjectContext *newContext = [CdManagedObjectContext newBackgroundContext];
         [newContext performBlockAndWait:^{
             NSThread *currentThread = NSThread.currentThread;
@@ -158,7 +175,15 @@ BOOL s_cadmium_defaultSerialTransactions = YES;
             error = [Cd _transactOperationFromContext:newContext operation:block];
             currentThread.insideTransaction = prevInside;
         }];
-    });
+    };
+    
+    if (queue) {
+        dispatch_sync(queue, ^{
+            transaction();
+        });
+    } else {
+        transaction();
+    }    
     
     return error;
 }

@@ -639,6 +639,53 @@ typedef void (^CdExceptionCatchBlock)(void);
     return result;
 }
 
+- (NSArray<NSNumber *> *)helperRunParallelIncNormal:(int)maxMillionths
+                                            onQueue:(dispatch_queue_t)queue {
+    
+    srand((unsigned int)time(0));
+    
+    NSMutableArray<NSNumber *> *result = [NSMutableArray array];
+    NSLock *lock = [[NSLock alloc] init];
+    
+    dispatch_queue_t bgqueue = dispatch_queue_create("parallel", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_group_t group = dispatch_group_create();
+    
+    for (int t1 = 0; t1 < 40; t1++) {
+        for (int t2 = 0; t2 < 25; t2++) {
+        
+            dispatch_group_enter(group);
+            [Cd transactOnQueue:queue block:^{
+                
+            
+                TestItem *obj = [[TestItem query:^(CdFetchRequest * _Nonnull config) {
+                    [config filterWithFormat:@"name = %@", @"A"];
+                }] fetchOne:nil];
+                
+                double delaytime = (rand() % maxMillionths) / 1000000.0;
+                [NSThread sleepForTimeInterval:delaytime];
+                
+                int64_t curId = obj.objId;
+                
+                [NSThread sleepForTimeInterval:delaytime];
+                
+                [lock lock];
+                [result addObject:@(curId)];
+                [lock unlock];
+                
+                obj.objId = curId + 1;
+                
+                dispatch_async(bgqueue, ^{
+                    dispatch_group_leave(group);
+                });
+            } completion:nil];
+            
+        }
+        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    }
+    
+    return result;
+}
+
 
 - (void)testParallelNoCrash {
     NSArray<NSNumber *> *result = [self helperRunParallelInc:10 onQueue:nil];
@@ -675,6 +722,41 @@ typedef void (^CdExceptionCatchBlock)(void);
     XCTAssertEqual(dupfound, false, @"results did not run serially");
 }
 
+
+- (void)testParallelNoCrash2 {
+    NSArray<NSNumber *> *result = [self helperRunParallelIncNormal:10 onQueue:nil];
+    
+    BOOL dupfound = NO;
+    NSMutableSet<NSNumber *> *already = [NSMutableSet set];
+    for (NSNumber *n in result) {
+        if ([already containsObject:n]) {
+            dupfound = YES;
+            break;
+        }
+        [already addObject:n];
+    }
+    
+    XCTAssertEqual(result.count, 1000, @"did not get 1000 results");
+    XCTAssertEqual(dupfound, true, @"results ran serially");
+}
+
+
+- (void)testParallelSerialNoCrash2 {
+    NSArray<NSNumber *> *result = [self helperRunParallelIncNormal:10 onQueue:dispatch_queue_create("s", 0)];
+    
+    BOOL dupfound = NO;
+    NSMutableSet<NSNumber *> *already = [NSMutableSet set];
+    for (NSNumber *n in result) {
+        if ([already containsObject:n]) {
+            dupfound = YES;
+            break;
+        }
+        [already addObject:n];
+    }
+    
+    XCTAssertEqual(result.count, 1000, @"did not get 1000 results");
+    XCTAssertEqual(dupfound, false, @"results did not run serially");
+}
 
 
 - (void)initData {

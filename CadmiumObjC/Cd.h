@@ -34,7 +34,7 @@ typedef void (^CdCompletionBlock)(NSError * _Nullable error);
 
 + (void)transact:(nonnull CdTransactionBlock)block;
 + (void)transact:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;
-+ (void)transactOnQueue:(nonnull dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;
++ (void)transactOnQueue:(nullable dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block completion:(nullable CdCompletionBlock)completion;
 + (nullable NSError *)transactAndWait:(nonnull CdTransactionBlock)block;
 + (nullable NSError *)transactAndWaitOnQueue:(nullable dispatch_queue_t)queue block:(nonnull CdTransactionBlock)block;
 
