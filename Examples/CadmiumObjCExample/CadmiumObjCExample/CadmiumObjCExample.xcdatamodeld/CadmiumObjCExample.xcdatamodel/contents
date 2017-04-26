@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="TestItem" representedClassName="TestItem" syncable="YES">
+        <attribute name="clicks" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" indexed="YES" syncable="YES"/>
+        <attribute name="title" attributeType="String" indexed="YES" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="TestItem" positionX="-63" positionY="-18" width="128" height="75"/>
+    </elements>
+</model>

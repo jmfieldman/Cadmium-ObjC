@@ -1,0 +1,397 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		356C04651EB0D29D004B5DC7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04641EB0D29D004B5DC7 /* main.m */; };
+		356C04681EB0D29D004B5DC7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04671EB0D29D004B5DC7 /* AppDelegate.m */; };
+		356C046B1EB0D29D004B5DC7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C046A1EB0D29D004B5DC7 /* ViewController.m */; };
+		356C04711EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 356C046F1EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodeld */; };
+		356C04731EB0D29D004B5DC7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 356C04721EB0D29D004B5DC7 /* Assets.xcassets */; };
+		356C04761EB0D29D004B5DC7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 356C04741EB0D29D004B5DC7 /* LaunchScreen.storyboard */; };
+		356C048F1EB0D340004B5DC7 /* Cd.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04801EB0D340004B5DC7 /* Cd.m */; };
+		356C04901EB0D340004B5DC7 /* CdException.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04821EB0D340004B5DC7 /* CdException.m */; };
+		356C04911EB0D340004B5DC7 /* CdFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04841EB0D340004B5DC7 /* CdFetchRequest.m */; };
+		356C04921EB0D340004B5DC7 /* CdManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04871EB0D340004B5DC7 /* CdManagedObject.m */; };
+		356C04931EB0D340004B5DC7 /* CdManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04891EB0D340004B5DC7 /* CdManagedObjectContext.m */; };
+		356C04941EB0D340004B5DC7 /* CdUpdateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C048B1EB0D340004B5DC7 /* CdUpdateNode.m */; };
+		356C04961EB0D340004B5DC7 /* NSThread+Cadmium.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C048E1EB0D340004B5DC7 /* NSThread+Cadmium.m */; };
+		356C04A11EB0D5DA004B5DC7 /* TestItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04A01EB0D5DA004B5DC7 /* TestItem.m */; };
+		356C04A41EB0D6E7004B5DC7 /* TestItemTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 356C04A31EB0D6E7004B5DC7 /* TestItemTableViewCell.m */; };
+		35EBB3E31EB0DBE2001439A1 /* CdFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 35EBB3E11EB0DBE2001439A1 /* CdFetchedResultsController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		356C04601EB0D29D004B5DC7 /* CadmiumObjCExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CadmiumObjCExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		356C04641EB0D29D004B5DC7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		356C04661EB0D29D004B5DC7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		356C04671EB0D29D004B5DC7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		356C04691EB0D29D004B5DC7 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		356C046A1EB0D29D004B5DC7 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		356C04701EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CadmiumObjCExample.xcdatamodel; sourceTree = "<group>"; };
+		356C04721EB0D29D004B5DC7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		356C04751EB0D29D004B5DC7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		356C04771EB0D29D004B5DC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		356C047F1EB0D340004B5DC7 /* Cd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cd.h; sourceTree = "<group>"; };
+		356C04801EB0D340004B5DC7 /* Cd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cd.m; sourceTree = "<group>"; };
+		356C04811EB0D340004B5DC7 /* CdException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdException.h; sourceTree = "<group>"; };
+		356C04821EB0D340004B5DC7 /* CdException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdException.m; sourceTree = "<group>"; };
+		356C04831EB0D340004B5DC7 /* CdFetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdFetchRequest.h; sourceTree = "<group>"; };
+		356C04841EB0D340004B5DC7 /* CdFetchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdFetchRequest.m; sourceTree = "<group>"; };
+		356C04851EB0D340004B5DC7 /* CdInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdInternal.h; sourceTree = "<group>"; };
+		356C04861EB0D340004B5DC7 /* CdManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdManagedObject.h; sourceTree = "<group>"; };
+		356C04871EB0D340004B5DC7 /* CdManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdManagedObject.m; sourceTree = "<group>"; };
+		356C04881EB0D340004B5DC7 /* CdManagedObjectContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdManagedObjectContext.h; sourceTree = "<group>"; };
+		356C04891EB0D340004B5DC7 /* CdManagedObjectContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdManagedObjectContext.m; sourceTree = "<group>"; };
+		356C048A1EB0D340004B5DC7 /* CdUpdateNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdUpdateNode.h; sourceTree = "<group>"; };
+		356C048B1EB0D340004B5DC7 /* CdUpdateNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdUpdateNode.m; sourceTree = "<group>"; };
+		356C048D1EB0D340004B5DC7 /* NSThread+Cadmium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Cadmium.h"; sourceTree = "<group>"; };
+		356C048E1EB0D340004B5DC7 /* NSThread+Cadmium.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Cadmium.m"; sourceTree = "<group>"; };
+		356C049F1EB0D5DA004B5DC7 /* TestItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestItem.h; sourceTree = "<group>"; };
+		356C04A01EB0D5DA004B5DC7 /* TestItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestItem.m; sourceTree = "<group>"; };
+		356C04A21EB0D6E7004B5DC7 /* TestItemTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestItemTableViewCell.h; sourceTree = "<group>"; };
+		356C04A31EB0D6E7004B5DC7 /* TestItemTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestItemTableViewCell.m; sourceTree = "<group>"; };
+		35EBB3E11EB0DBE2001439A1 /* CdFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdFetchedResultsController.m; sourceTree = "<group>"; };
+		35EBB3E21EB0DBE2001439A1 /* CdFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdFetchedResultsController.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		356C045D1EB0D29D004B5DC7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		356C04571EB0D29D004B5DC7 = {
+			isa = PBXGroup;
+			children = (
+				356C047D1EB0D340004B5DC7 /* CadmiumObjC */,
+				356C04621EB0D29D004B5DC7 /* CadmiumObjCExample */,
+				356C04611EB0D29D004B5DC7 /* Products */,
+			);
+			sourceTree = "<group>";
+			usesTabs = 0;
+		};
+		356C04611EB0D29D004B5DC7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				356C04601EB0D29D004B5DC7 /* CadmiumObjCExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		356C04621EB0D29D004B5DC7 /* CadmiumObjCExample */ = {
+			isa = PBXGroup;
+			children = (
+				356C04661EB0D29D004B5DC7 /* AppDelegate.h */,
+				356C04671EB0D29D004B5DC7 /* AppDelegate.m */,
+				356C04691EB0D29D004B5DC7 /* ViewController.h */,
+				356C046A1EB0D29D004B5DC7 /* ViewController.m */,
+				356C04A21EB0D6E7004B5DC7 /* TestItemTableViewCell.h */,
+				356C04A31EB0D6E7004B5DC7 /* TestItemTableViewCell.m */,
+				356C049F1EB0D5DA004B5DC7 /* TestItem.h */,
+				356C04A01EB0D5DA004B5DC7 /* TestItem.m */,
+				356C04721EB0D29D004B5DC7 /* Assets.xcassets */,
+				356C04741EB0D29D004B5DC7 /* LaunchScreen.storyboard */,
+				356C04771EB0D29D004B5DC7 /* Info.plist */,
+				356C046F1EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodeld */,
+				356C04631EB0D29D004B5DC7 /* Supporting Files */,
+			);
+			path = CadmiumObjCExample;
+			sourceTree = "<group>";
+		};
+		356C04631EB0D29D004B5DC7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				356C04641EB0D29D004B5DC7 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		356C047D1EB0D340004B5DC7 /* CadmiumObjC */ = {
+			isa = PBXGroup;
+			children = (
+				356C047F1EB0D340004B5DC7 /* Cd.h */,
+				356C04801EB0D340004B5DC7 /* Cd.m */,
+				356C04811EB0D340004B5DC7 /* CdException.h */,
+				356C04821EB0D340004B5DC7 /* CdException.m */,
+				356C04831EB0D340004B5DC7 /* CdFetchRequest.h */,
+				356C04841EB0D340004B5DC7 /* CdFetchRequest.m */,
+				35EBB3E21EB0DBE2001439A1 /* CdFetchedResultsController.h */,
+				35EBB3E11EB0DBE2001439A1 /* CdFetchedResultsController.m */,
+				356C04851EB0D340004B5DC7 /* CdInternal.h */,
+				356C04861EB0D340004B5DC7 /* CdManagedObject.h */,
+				356C04871EB0D340004B5DC7 /* CdManagedObject.m */,
+				356C04881EB0D340004B5DC7 /* CdManagedObjectContext.h */,
+				356C04891EB0D340004B5DC7 /* CdManagedObjectContext.m */,
+				356C048A1EB0D340004B5DC7 /* CdUpdateNode.h */,
+				356C048B1EB0D340004B5DC7 /* CdUpdateNode.m */,
+				356C048D1EB0D340004B5DC7 /* NSThread+Cadmium.h */,
+				356C048E1EB0D340004B5DC7 /* NSThread+Cadmium.m */,
+			);
+			name = CadmiumObjC;
+			path = ../../CadmiumObjC;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		356C045F1EB0D29D004B5DC7 /* CadmiumObjCExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 356C047A1EB0D29D004B5DC7 /* Build configuration list for PBXNativeTarget "CadmiumObjCExample" */;
+			buildPhases = (
+				356C045C1EB0D29D004B5DC7 /* Sources */,
+				356C045D1EB0D29D004B5DC7 /* Frameworks */,
+				356C045E1EB0D29D004B5DC7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CadmiumObjCExample;
+			productName = CadmiumObjCExample;
+			productReference = 356C04601EB0D29D004B5DC7 /* CadmiumObjCExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		356C04581EB0D29D004B5DC7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Jason Fieldman";
+				TargetAttributes = {
+					356C045F1EB0D29D004B5DC7 = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = GGY9Q9R73R;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 356C045B1EB0D29D004B5DC7 /* Build configuration list for PBXProject "CadmiumObjCExample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 356C04571EB0D29D004B5DC7;
+			productRefGroup = 356C04611EB0D29D004B5DC7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				356C045F1EB0D29D004B5DC7 /* CadmiumObjCExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		356C045E1EB0D29D004B5DC7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				356C04761EB0D29D004B5DC7 /* LaunchScreen.storyboard in Resources */,
+				356C04731EB0D29D004B5DC7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		356C045C1EB0D29D004B5DC7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				356C04961EB0D340004B5DC7 /* NSThread+Cadmium.m in Sources */,
+				356C046B1EB0D29D004B5DC7 /* ViewController.m in Sources */,
+				356C04711EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodeld in Sources */,
+				356C04A41EB0D6E7004B5DC7 /* TestItemTableViewCell.m in Sources */,
+				356C04A11EB0D5DA004B5DC7 /* TestItem.m in Sources */,
+				35EBB3E31EB0DBE2001439A1 /* CdFetchedResultsController.m in Sources */,
+				356C04901EB0D340004B5DC7 /* CdException.m in Sources */,
+				356C04681EB0D29D004B5DC7 /* AppDelegate.m in Sources */,
+				356C04651EB0D29D004B5DC7 /* main.m in Sources */,
+				356C04911EB0D340004B5DC7 /* CdFetchRequest.m in Sources */,
+				356C04931EB0D340004B5DC7 /* CdManagedObjectContext.m in Sources */,
+				356C04941EB0D340004B5DC7 /* CdUpdateNode.m in Sources */,
+				356C048F1EB0D340004B5DC7 /* Cd.m in Sources */,
+				356C04921EB0D340004B5DC7 /* CdManagedObject.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		356C04741EB0D29D004B5DC7 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				356C04751EB0D29D004B5DC7 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		356C04781EB0D29D004B5DC7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		356C04791EB0D29D004B5DC7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		356C047B1EB0D29D004B5DC7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = GGY9Q9R73R;
+				INFOPLIST_FILE = CadmiumObjCExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.fieldman.CadmiumObjCExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		356C047C1EB0D29D004B5DC7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = GGY9Q9R73R;
+				INFOPLIST_FILE = CadmiumObjCExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.fieldman.CadmiumObjCExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		356C045B1EB0D29D004B5DC7 /* Build configuration list for PBXProject "CadmiumObjCExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				356C04781EB0D29D004B5DC7 /* Debug */,
+				356C04791EB0D29D004B5DC7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		356C047A1EB0D29D004B5DC7 /* Build configuration list for PBXNativeTarget "CadmiumObjCExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				356C047B1EB0D29D004B5DC7 /* Debug */,
+				356C047C1EB0D29D004B5DC7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		356C046F1EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				356C04701EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodel */,
+			);
+			currentVersion = 356C04701EB0D29D004B5DC7 /* CadmiumObjCExample.xcdatamodel */;
+			path = CadmiumObjCExample.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 356C04581EB0D29D004B5DC7 /* Project object */;
+}

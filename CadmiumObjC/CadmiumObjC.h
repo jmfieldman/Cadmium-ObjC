@@ -15,5 +15,10 @@ FOUNDATION_EXPORT double CadmiumObjCVersionNumber;
 FOUNDATION_EXPORT const unsigned char CadmiumObjCVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <CadmiumObjC/PublicHeader.h>
-
+#import <CadmiumObjC/Cd.h>
+#import <CadmiumObjC/CdException.h>
+#import <CadmiumObjC/CdManagedObject.h>
+#import <CadmiumObjC/CdManagedObjectContext.h>
+#import <CadmiumObjC/CdFetchRequest.h>
+#import <CadmiumObjC/CdFetchedResultsController.h>
 

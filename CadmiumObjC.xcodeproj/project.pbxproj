@@ -26,6 +26,8 @@
 		35978FAE1E636240009570A5 /* CdUpdateNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 35978FAC1E636240009570A5 /* CdUpdateNode.m */; };
 		35978FB11E63A750009570A5 /* CadmiumTestModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35978FAF1E63A750009570A5 /* CadmiumTestModel.xcdatamodeld */; };
 		35978FB41E63A7B8009570A5 /* TestItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 35978FB31E63A7B8009570A5 /* TestItem.m */; };
+		35EBB3DF1EB0DB1F001439A1 /* CdFetchedResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 35EBB3DD1EB0DB1F001439A1 /* CdFetchedResultsController.h */; };
+		35EBB3E01EB0DB1F001439A1 /* CdFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 35EBB3DE1EB0DB1F001439A1 /* CdFetchedResultsController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,8 @@
 		35978FB01E63A750009570A5 /* CadmiumTestModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CadmiumTestModel.xcdatamodel; sourceTree = "<group>"; };
 		35978FB21E63A7B8009570A5 /* TestItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestItem.h; sourceTree = "<group>"; };
 		35978FB31E63A7B8009570A5 /* TestItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestItem.m; sourceTree = "<group>"; };
+		35EBB3DD1EB0DB1F001439A1 /* CdFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CdFetchedResultsController.h; sourceTree = "<group>"; };
+		35EBB3DE1EB0DB1F001439A1 /* CdFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CdFetchedResultsController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +123,8 @@
 				35978FA01E635565009570A5 /* CdManagedObjectContext.m */,
 				35978FA31E635574009570A5 /* CdFetchRequest.h */,
 				35978FA41E635574009570A5 /* CdFetchRequest.m */,
+				35EBB3DD1EB0DB1F001439A1 /* CdFetchedResultsController.h */,
+				35EBB3DE1EB0DB1F001439A1 /* CdFetchedResultsController.m */,
 				35978FAB1E636240009570A5 /* CdUpdateNode.h */,
 				35978FAC1E636240009570A5 /* CdUpdateNode.m */,
 				35978FA71E635762009570A5 /* NSThread+Cadmium.h */,
@@ -147,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35978FA91E635762009570A5 /* NSThread+Cadmium.h in Headers */,
+				35EBB3DF1EB0DB1F001439A1 /* CdFetchedResultsController.h in Headers */,
 				35978F871E6349F8009570A5 /* CadmiumObjC.h in Headers */,
 				35978FA11E635565009570A5 /* CdManagedObjectContext.h in Headers */,
 				35978F921E634AD8009570A5 /* Cd.h in Headers */,
@@ -265,6 +272,7 @@
 				35978F9E1E635559009570A5 /* CdManagedObject.m in Sources */,
 				35978FA21E635565009570A5 /* CdManagedObjectContext.m in Sources */,
 				35978FAA1E635762009570A5 /* NSThread+Cadmium.m in Sources */,
+				35EBB3E01EB0DB1F001439A1 /* CdFetchedResultsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +475,7 @@
 				35978F8C1E6349F8009570A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		35978F8D1E6349F8009570A5 /* Build configuration list for PBXNativeTarget "CadmiumObjCTests" */ = {
 			isa = XCConfigurationList;
@@ -475,6 +484,7 @@
 				35978F8F1E6349F8009570A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
